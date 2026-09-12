@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio Admin — Christopher Victor Chinedu</title>
+<style>
+:root{--bg:#171008;--card:#221709;--card2:#2b1d0d;--line:#4a3013;--txt:#ffe4c4;--mut:#c9a87a;--acc:#c68a3c;--acc2:#e8b26a;--ok:#7bc47f;--r:12px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 system-ui,Segoe UI,Arial}
+header{position:sticky;top:0;background:#1e130a;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:10}
+header b{color:var(--acc2)}header small{color:var(--mut)}
+.wrap{max-width:1150px;margin:auto;padding:16px;display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 8px;font-size:16px;color:var(--acc2);border-bottom:1px solid var(--line);padding-bottom:6px}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+input,textarea{width:100%;background:#120c05;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font:inherit;min-height:44px}
+input:focus,textarea:focus{outline:2px solid var(--acc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+button{cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;background:var(--card2);color:var(--txt);min-height:44px}
+button.p{background:var(--acc);border-color:var(--acc);color:#1a1005;font-weight:700}
+button.g{background:#1d2b1d;border-color:#3c5a3e}button.d{background:#2e1512;border-color:#6b2d26}
+.skillrow{display:grid;grid-template-columns:1fr 70px;gap:6px;align-items:end}
+.proj{border:1px dashed var(--line);border-radius:8px;padding:8px;margin-top:8px}
+.proj b{font-size:13px;color:var(--acc2)}
+#preview{background:#0f0a05;border:1px solid var(--line);border-radius:var(--r);padding:14px;position:sticky;top:70px;align-self:start}
+.pv-hero{border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px}
+.pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pv-card{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:13px}
+.pv-card h4{margin:0 0 4px;color:var(--acc2)}.pv-card span{font-size:11px;color:var(--mut)}
+.bar{height:8px;background:#000;border-radius:99px;overflow:hidden;margin:3px 0 6px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+pre{white-space:pre-wrap;word-break:break-word;background:#0a0703;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;max-height:220px;overflow:auto}
+#gate{position:fixed;inset:0;background:rgba(10,6,2,.96);display:flex;align-items:center;justify-content:center;z-index:99;padding:16px}
+.gbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:340px;width:100%;text-align:center}
+.warn{font-size:12px;color:var(--mut)}.ok{color:var(--ok);font-size:13px}
+.back{color:var(--acc2)}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}#preview{position:static}.grid2{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}.pv-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="gate"><div class="gbox">
+<h2>Admin Login</h2><p class="warn">Front-end only gate. Default PIN: <b>1234</b>. Change it below after login. Anyone with file access can bypass — do not rely on it for real security.</p>
+<input id="pinIn" type="password" placeholder="Enter PIN" style="text-align:center">
+<div class="row" style="justify-content:center"><button class="p" onclick="unlock()">Unlock</button></div>
+<p id="pinErr" class="warn"></p></div></div>
+<header><b>C.Victor Admin</b><small>local-only CMS • localStorage • no server</small>
+<span style="flex:1"></span>
+<a class="back" href="portfolio.html">← View portfolio</a>
+<button onclick="save(true)">Save</button><button class="d" onclick="resetAll()">Reset</button>
+<button class="g" onclick="exportJSON()">Export JSON</button></header>
+<div class="wrap"><div>
+<div class="card"><h2>1 • Hero + Contact</h2>
+<label>Name</label><input id="f-name">
+<div class="grid2"><div><label>Role</label><input id="f-role"></div><div><label>Based</label><input id="f-loc"></div></div>
+<label>Tagline</label><textarea id="f-tag" rows="2"></textarea>
+<div class="grid2"><div><label>Phone (+234…)</label><input id="f-phone"></div><div><label>Change PIN</label><input id="f-pin" maxlength="12"></div></div></div>
+<div class="card"><h2>2 • About — Quick Facts</h2>
+<label>Field</label><input id="f-field"><label>Focus</label><input id="f-focus">
+<label>Interests</label><input id="f-interests"><label>Goal</label><input id="f-goal"></div>
+<div class="card"><h2>3 • Skills % (Average = mean of the rest)</h2><div id="skills"></div><p class="warn">Math: (85+90+90+80+55+80+80)/7 = 560/7 = 80%. Keep 0–100.</p></div>
+<div class="card"><h2>4 • Projects (live on portfolio)</h2><div id="projs"></div></div>
+<div class="card"><h2>5 • Draft slots (moved here from portfolio)</h2><div id="drafts"></div>
+<p class="warn">Publish = adds to preview + generates paste-snippet below. Nothing auto-writes portfolio.html. These replace the old empty "Your Next Project Here" cards.</p>
+<label>HTML snippet to paste into portfolio.html</label><pre id="snippet">&lt;!-- publish a draft to generate snippet --&gt;</pre>
+<div class="row"><button class="g" onclick="copySnippet()">Copy snippet</button><button onclick="dlSnippet()">Download snippet.html</button></div></div>
+<div class="card"><h2>6 • Export / Apply</h2>
+<div class="row"><button class="p" onclick="exportJSON()">Export JSON</button><button onclick="copyJSON()">Copy JSON</button><button onclick="dlJSON()">Download JSON</button></div>
+<label>Exported data (backup or re-import)</label><textarea id="out" rows="6" placeholder="Click Export JSON"></textarea>
+<pre>APPLY TO portfolio.html:
+1. Edit text between matching tags (hero h1 / .tagline / facts li / skill-fill data-progress + skill-value / project h3+p+tags / wa.me numbers).
+2. New project: paste snippet from section 5 just BEFORE the closing of .project-grid.
+3. Save, hard-refresh (Ctrl+F5). Keep admin.html OUT of public hosting.</pre>
+<p id="msg" class="ok"></p></div>
+</div><div><div id="preview"><h2 style="margin:0 0 8px;color:var(--acc2)">Live preview</h2><div class="pv-hero"><b id="pv-name"></b><br><small id="pv-role"></small><p id="pv-tag" style="color:var(--mut)"></p><small id="pv-contact"></small></div><b>Skills</b><div id="pv-skills"></div><br><b>Projects</b><div class="pv-grid" id="pv-projs"></div></div></div></div>
+<script>
+var KEY="cvc_admin_v1";
+var DEF={name:"Christopher Victor Chinedu",role:"Web Developer | Pharmacy and Technology",loc:"Ilorin, Nigeria",
+tag:"I turn ideas into clean, functional websites that help individuals, business and organization build a stronger presence online.",
+phone:"+2347079057773",pin:"1234",field:"Pharmacy and Technology",focus:"HTML, CSS, JavaScript, Digital Solution",
+interests:"Technology, Healthcare and Innovation",goal:"Building useful digital solution",
+skills:{HTML:85,CSS:90,"UI/UX":90,Responsive:80,JavaScript:55,Python:80,Tailwind:80,Average:80},
+projects:[
+{t:"Banking website",d:"A banking website for managing accounts, transactions, transfers, and essential financial services.",g:"HTML5,CSS3",l:"https://victors-music.vercel.app"},
+{t:"Pharmacy Hub",d:"A pharmacy education platform providing study materials, past questions, and academic resources for pharmacy students.",g:"HTML,CSS,JavaScript",l:"https://onknow.com"},
+{t:"Room E1 website",d:"A personal room website displaying room rules, regulations, and important guidelines for occupants.",g:"HTML5,Tailwind CSS,JavaScript",l:"https://onknow.com"},
+{t:"Biography",d:"A personal website showcasing my background, skills, achievements, interests, and career journey.",g:"HTML5,CSS,Python",l:"https://onknow.com"},
+{t:"Victok",d:"A social media platform inspired by TikTok, featuring video sharing, user profiles, and social interactions.",g:"HTML,Tailwind CSS,JavaScript",l:"https://onknow.com"},
+{t:"Electricity bill payment interface",d:"An interface for checking electricity bills, entering meter details, and making payments.",g:"HTML5,CSS3,JavaScript",l:"https://onknow.com"},
+{t:"Food ordering system",d:"A food ordering platform for browsing menus, selecting meals, placing orders, and managing purchases.",g:"HTML,CSS3,Python",l:"https://onknow.com"},
+{t:"e commerce store with shopping cart",d:"A professional e-commerce platform featuring product browsing, shopping cart functionality, and streamlined purchasing.",g:"HTML5,JavaScript,Python",l:"https://onknow.com"},
+{t:"Petroleum website",d:"A professional website showcasing petroleum products, services, and company information.",g:"HTML,Tailwind CSS,Python",l:"https://onknow.com"},
+{t:"Mapelo",d:"A student-focused news platform providing campus news, exam updates, and academic resources.",g:"HTML5,Tailwind CSS,Python",l:"https://onknow.com"},
+{t:"Music store",d:"A music website showcasing songs, artists, albums, and other music-related content.",g:"JavaScript,CSS3,Python",l:"https://onknow.com"}],
+drafts:[{t:"",d:"",g:"HTML,CSS,JavaScript",l:"https://onknow.com"},{t:"",d:"",g:"HTML,CSS,JavaScript",l:"https://onknow.com"},{t:"",d:"",g:"HTML,CSS,JavaScript",l:"https://onknow.com"},{t:"",d:"",g:"HTML,CSS,JavaScript",l:"https://onknow.com"}]};
+var D=load();
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.name)return s}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+function save(toast){readForm();D.pin=document.getElementById("f-pin").value||D.pin||"1234";localStorage.setItem(KEY,JSON.stringify(D));render();if(toast)msg("Saved to localStorage")}
+function msg(t){var m=document.getElementById("msg");m.textContent=t;setTimeout(function(){m.textContent=""},2500)}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function build(){
+var s=document.getElementById("skills"),h="";
+Object.keys(D.skills).forEach(function(k){h+='<div class="skillrow"><div><label>'+esc(k)+' %</label><input data-sk="'+esc(k)+'" type="number" min="0" max="100" value="'+D.skills[k]+'"></div><div><label>&nbsp;</label><input value="'+D.skills[k]+'%" disabled></div></div>'});
+s.innerHTML=h;
+var p=document.getElementById("projs"),ph="";
+D.projects.forEach(function(o,i){ph+='<div class="proj"><b>Project '+(i+1)+'</b><label>Title</label><input data-p="'+i+'" data-k="t" value="'+esc(o.t)+'"><label>Desc</label><textarea data-p="'+i+'" data-k="d" rows="2">'+esc(o.d)+'</textarea><div class="grid2"><div><label>Tags (comma)</label><input data-p="'+i+'" data-k="g" value="'+esc(o.g)+'"></div><div><label>Link</label><input data-p="'+i+'" data-k="l" value="'+esc(o.l)+'"></div></div></div>'});
+p.innerHTML=ph;
+var dr=document.getElementById("drafts"),dh="";
+D.drafts.forEach(function(o,i){dh+='<div class="proj"><b>Draft slot '+(i+1)+'</b><label>Title</label><input data-dr="'+i+'" data-k="t" value="'+esc(o.t)+'" placeholder="e.g. New project title"><label>Desc</label><textarea data-dr="'+i+'" data-k="d" rows="2" placeholder="1-2 lines">'+esc(o.d)+'</textarea><div class="grid2"><div><label>Tags</label><input data-dr="'+i+'" data-k="g" value="'+esc(o.g)+'"></div><div><label>Link</label><input data-dr="'+i+'" data-k="l" value="'+esc(o.l)+'"></div></div><div class="row"><button class="p" onclick="publish('+i+')">Publish - preview + snippet</button></div></div>'});
+dr.innerHTML=dh;
+document.getElementById("f-name").value=D.name;document.getElementById("f-role").value=D.role;document.getElementById("f-loc").value=D.loc;document.getElementById("f-tag").value=D.tag;document.getElementById("f-phone").value=D.phone;
+document.getElementById("f-field").value=D.field;document.getElementById("f-focus").value=D.focus;document.getElementById("f-interests").value=D.interests;document.getElementById("f-goal").value=D.goal;document.getElementById("f-pin").value=D.pin;
+}
+function readForm(){D.name=v("f-name");D.role=v("f-role");D.loc=v("f-loc");D.tag=v("f-tag");D.phone=v("f-phone");D.field=v("f-field");D.focus=v("f-focus");D.interests=v("f-interests");D.goal=v("f-goal");
+document.querySelectorAll("[data-sk]").forEach(function(i){D.skills[i.getAttribute("data-sk")]=Math.max(0,Math.min(100,+i.value||0))});
+document.querySelectorAll("[data-p]").forEach(function(i){D.projects[+i.getAttribute("data-p")][i.getAttribute("data-k")]=i.value});
+document.querySelectorAll("[data-dr]").forEach(function(i){D.drafts[+i.getAttribute("data-dr")][i.getAttribute("data-k")]=i.value});}
+function v(id){return document.getElementById(id).value}
+function render(){document.getElementById("pv-name").textContent=D.name;document.getElementById("pv-role").textContent=D.role+" • "+D.loc;document.getElementById("pv-tag").textContent=D.tag;document.getElementById("pv-contact").textContent=D.loc+" • "+D.phone;
+var h="";Object.keys(D.skills).forEach(function(k){h+="<small>"+esc(k)+" "+D.skills[k]+"%</small>"+'<div class="bar"><i style="width:'+D.skills[k]+'%"></i></div>'});document.getElementById("pv-skills").innerHTML=h;
+var g="";D.projects.concat(D.drafts.filter(function(x){return x.t})).forEach(function(o){g+='<div class="pv-card"><h4>'+esc(o.t)+'</h4><p>'+esc(o.d)+'</p><span>'+esc(o.g)+'</span></div>'});document.getElementById("pv-projs").innerHTML=g||"<small>No drafts published yet.</small>"}
+function cardHTML(o){var tags=String(o.g).split(",").map(function(t){return "<span>"+esc(t.trim())+"</span>"}).join("");
+return '<a href="'+esc(o.l)+'" target="_blank" rel="noopener" class="project-card" data-tilt data-tilt-max="8">\n <div class="project-thumb thumb-geo"><span class="thumb-icon" aria-hidden="true">[SVG ICON]</span><span class="thumb-overlay"><span class="overlay-btn">View Live</span></span></div>\n <div class="project-body">\n  <h3>'+esc(o.t)+'</h3>\n  <p>'+esc(o.d)+'</p>\n  <div class="project-tags">'+tags+'</div>\n </div>\n</a>'}
+function publish(i){readForm();var d=D.drafts[i];if(!d.t||!d.d){alert("Fill draft title + desc first.");return}document.getElementById("snippet").textContent="<!-- PASTE INTO .project-grid IN portfolio.html -->\n"+cardHTML(d);save();msg("Draft "+(i+1)+" published to preview - copy snippet below")}
+function copySnippet(){var t=document.getElementById("snippet").textContent;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){msg("Snippet copied")})}else{var r=document.createRange();r.selectNode(document.getElementById("snippet"));var s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand("copy");msg("Snippet copied")}}
+function dlSnippet(){dl("project-snippet.html",document.getElementById("snippet").textContent)}
+function exportJSON(){readForm();document.getElementById("out").value=JSON.stringify(D,null,2);msg("JSON exported below")}
+function copyJSON(){exportJSON();document.getElementById("out").select();document.execCommand("copy")}
+function dlJSON(){readForm();dl("portfolio-data.json",JSON.stringify(D,null,2))}
+function dl(name,text){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/plain"}));a.download=name;a.click()}
+function resetAll(){if(!confirm("Reset to defaults?"))return;D=JSON.parse(JSON.stringify(DEF));localStorage.removeItem(KEY);location.reload()}
+function unlock(){var pin=document.getElementById("pinIn").value;var real=D.pin||"1234";if(pin===real){document.getElementById("gate").style.display="none";sessionStorage.setItem("adm","1")}else{document.getElementById("pinErr").textContent="Wrong PIN (hint: 1234)"}}
+if(sessionStorage.getItem("adm")==="1")document.getElementById("gate").style.display="none";
+document.querySelector(".wrap").addEventListener("input",function(){readForm();try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}render()});
+build();render();
+</script>
+</body>
+</html>
